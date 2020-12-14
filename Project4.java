@@ -1,11 +1,17 @@
+/* Programmer: Joshua Mejia
+ * COMP482 - Project 4
+ * Noga
+ * 14 December 2020
+ */
+
 import java.io.*;
 import java.util.*;
 
 public class Project4{
   // initialize some variables
   public static int dp[][];
-  public static int best = -1;
-  public static int besti, bestj;
+  public static int longestPath = -1;
+  public static int lpi, lpj;
   // simple function to input data from text file
   public static int[] readFile(String file){
     try{
@@ -28,6 +34,7 @@ public class Project4{
     catch(Exception e) { return null; }
   } 
 
+  // This method will create the paths possible from start to finish
   public static void init(int[][] arr, int row, int col){
 
     dp[row-1][col-1] = 1;
@@ -39,10 +46,10 @@ public class Project4{
         dp[i][col - 1] = 1;
       }
 
-      if(dp[i][col - 1] > best){
-        best = dp[i][col - 1];
-        besti = i;
-        bestj = col - 1; 
+      if(dp[i][col - 1] > longestPath){
+        longestPath = dp[i][col - 1];
+        lpi = i;
+        lpj = col - 1; 
       }
     }
 
@@ -54,15 +61,16 @@ public class Project4{
         dp[row - 1][j] = 1;
       }
 
-      if(dp[row - 1][j] > best){
-        best = dp[row - 1][j];
-        besti = row - 1;
-        bestj = j;
+      if(dp[row - 1][j] > longestPath){
+        longestPath = dp[row - 1][j];
+        lpi = row - 1;
+        lpj = j;
       }
     }
   }
 
-  public static void solve(int[][] arr, int row, int col){
+  // This method will determine which path is the longest segement from start to finish.
+  public static void findLPS(int[][] arr, int row, int col){
 
     for(int i = row - 2; i >= 0; i--){
       for(int j = col - 2; j >= 0; j--){
@@ -74,10 +82,10 @@ public class Project4{
         if(arr[i + 1][j] < arr[i][j])
           dp[i][j] = Math.max(dp[i][j], 1 + dp[i + 1][j]);
 
-        if(dp[i][j] > best){
-          best = dp[i][j];
-          besti = i;
-          bestj = j;
+        if(dp[i][j] > longestPath){
+          longestPath = dp[i][j];
+          lpi = i;
+          lpj = j;
         }
       }
     }
@@ -88,15 +96,15 @@ public class Project4{
     int column = input[1];
     int[] arr = Arrays.copyOfRange(input, 2, input.length);
     //System.out.println(Arrays.toString(arr));
+    // Create 2D array from input starting after the first two inputs that determine size row x column
     int grid[][] = new int[row][column];
     dp = new int[row][column];
     for(int i = 0; i < row; i++)
       for(int j = 0; j < column; j++)
         grid[i][j] = arr[(i*column) + j];
-
-    System.out.println(Arrays.deepToString(grid));
+    //System.out.println(Arrays.deepToString(grid));
     init(grid, row, column);
-    solve(grid, row, column);
-    System.out.println(best);
+    findLPS(grid, row, column);
+    System.out.println(longestPath);
   } 
 }
